@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{url_for('static',filename='history.css')}}">
+{% endblock %}
+
+{% block main %}
+<div class="d-flex justify-content-center py-4">
+    <div class="col-lg-8 col-sm-10 col-12">
+      <div class="timeline-box">
+        <div class="box-title">
+          <i class="float-right bg-{{status}} fa" aria-hidden="true" data-status="{{status}}"> {{status|capitalize}}</i>
+          <div class="d-flex"><strong>From</strong>:&nbsp<span> {{tran['from']}}</span></div>
+          <div class="d-flex"><strong>To</strong>&nbsp &nbsp &nbsp:&nbsp<span> {{tran['to']}}</span></div>
+        </div>
+        <div class="box-content">
+          <div class="box-item"><strong>Description</strong>:<br/>
+            {{tran['description']}}
+          </div>
+          <div class="box-item"><strong>Comment</strong>:<br/>
+            {{tran['comment']}}
+          </div>
+          <div class="row">
+            <div class="box-item col-sm-6 col-12"><strong>Attached file:</strong><br>
+              <div class="btn-group-vertical bg-light">
+                <a class="btn btn-lg btn-outline-info" href="{{url_for('.get_file',file_name=tran['letter'])}}">{{tran['letter']}}</a>
+                <a class="btn btn-sm btn-secondary" href="{{url_for('.get_file',file_name=tran['letter'])}}"><span class="fa fa-download"> </span></a>
+              </div>
+            </div>
+            <div class="box-item col-sm-6 col-12"><strong>Digital signatures file</strong>:<br>
+              <div class="btn-group-vertical bg-light">
+                <a class="btn btn-lg btn-outline-info" href="{{url_for('.get_file',file_name=tran['letter'])}}">{{tran['letter']}}</a>
+                <a class="btn btn-sm btn-secondary" href="{{url_for('.get_file',file_name=tran['letter'])}}"><span class="fa fa-download"> </span></a>
+              </div>
+            </div>
+          </div>
+  
+          <div class="box-item"><strong>Comment</strong>:<br/>
+            <form action="{{url_for('.modify_transaction')}}" method="post" class="form-group" id="{{tran['id']}}">
+              <textarea class="form-control mt-2" name="description" id="description" placeholder="{{tran['description']}}"></textarea>
+              <div class="custom-file mt-2">
+                <input type="file" class="custom-file-input" id="digital-sign" required>
+                <label class="custom-file-label" for="customFile">Add Digital signature</label>
+              </div>
+              <div class="d-flex justify-content-around align-items-center flex-wrap mt-2">
+                <button type="submit" name="action" value="accept" class="form-control-sm bg-accepted btn" id="accept" onclick="remove_required()">
+                  <i class="fa fa-check" aria-hidden="true" style="display: block;">Accept</i>
+                </button>
+                <button type="submit" name="action" value="reject" class="form-control-sm bg-rejected btn" id="reject" onclick="remove_required()">
+                  <i class="fa fa-ban" aria-hidden="true" style="display: block;">Reject</i>
+                </button>
+                <div id="forwarding" class="btn-group-vertical">
+                  <select name="to_dept" id="to_dept" class="form-control-sm" required>
+                    <option disabled selected value>Forward to</option>
+                    {% for department in dept %}
+                      {% if department[1] != session['username'] %}
+                        <option value="{{ department[1] }}">{{ department[1] }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                  <button type="submit" name="action" value="forward" class="form-control-sm bg-forwarded btn" id="forward">
+                    <i class="fa fa-mail-forward" aria-hidden="true" style="display: block;">Forward</i>
+                  </button>
+                </div>
+              </div>
+              <input type="hidden" name="id" value="{{tran['id']}}">
+              <input type="hidden" name="from_dept" value="{{tran['from']}}">
+              <input type="hidden" name="file" value="{{tran['letter']}}">
+            </form>
+          </div>
+  
+        </div>
+        <div class="box-footer">
+          <i class="float-left bg-{{status}} fa" aria-hidden="true" data-status="{{status}}"></i>
+          {{tran['time']}}
+          {% if status=='composed' %}
+            <div class="row" style="width: 100%">
+              {% for departs in tran['history'] %}
+                {% if departs['status']!="pending" %}
+                  <div class="col-sm-4 col-6 status">
+                    <span class="text-{{departs['status']}} fa" aria-hidden="true" data-status="{{departs['status']}}">
+                      {{departs['from']}} <span class="fa fa-arrow-circle-right"></span> {{departs['to']}}</span>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  
+  </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+      let composed = document.querySelectorAll('[data-status="composed"]');
+      let rejected = document.querySelectorAll('[data-status="rejected"]');
+      let forwarded = document.querySelectorAll('[data-status="forwarded"]');
+      let accepted = document.querySelectorAll('[data-status="accepted"]');
+      let pending = document.querySelectorAll('[data-status="pending"]');
+
+      for(let i=0; i<composed.length; ++i) {
+        composed[i].classList.add("fa-pencil");
+      }
+
+      for(let i=0; i<rejected.length; ++i) {
+        rejected[i].classList.add("fa-ban");
+      }
+
+      for(let i=0; i<forwarded.length; ++i) {
+        forwarded[i].classList.add("fa-mail-forward");
+      }
+
+      for(let i=0; i<accepted.length; ++i) {
+        accepted[i].classList.add("fa-check");
+      }
+
+      for(let i=0; i<pending.length; ++i) {
+        pending[i].classList.add("fa-clock-o");
+      }
+    </script>
+{% endblock %}

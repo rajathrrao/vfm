@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{url_for('static',filename='options.css')}}">
+{% endblock %}
+
+{% block main %}
+        <section>
+            <div class="container">
+                <a href="{{ url_for('.display_history', status='accepted') }}">
+                <div id="Accepted">
+                    <i class="fa fa-check" style="font-size:80px;color:rgb(255, 255, 255)"></i>
+                    <button class="tbtn" id="btn1"><h5 style="margin-bottom:0px;">Accepted</h5></button>
+                </div>
+                </a>
+                <a href="{{ url_for('.display_history', status='rejected') }}">
+                <div id="Rejected">
+                    <i class="fa fa-ban" style="font-size:80px;color:rgb(255, 255, 255)"></i>
+                    <button class="tbtn" id="btn2"><h5 style="margin-bottom:0px;">Rejected</h5></button>
+                </div>
+                </a>
+                <a href="{{ url_for('.display_history', status='forwarded') }}">
+                <div id="Forwarded">
+                    <i class="fa fa-mail-forward" style="font-size:80px;color:rgb(255, 255, 255)"></i>
+                    <button class="tbtn" id="btn3"><h5 style="margin-bottom:0px;">Forwarded</h5></button>
+                </div>
+                </a>
+                <a href="{{ url_for('.display_history', status='composed') }}">
+                <div id="Composed">
+                    <i class="fa fa-pencil" style="font-size:80px;color:rgb(255, 255, 255)"></i>
+                    <button class="tbtn" id="btn4"><h5 style="margin-bottom:0px;">Composed</h5></button>
+                </div>
+                </a>
+
+            </div>
+        </section>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

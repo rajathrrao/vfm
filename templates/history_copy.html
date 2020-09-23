@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{url_for('static',filename='history.css')}}">
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+      <div class="timeline">
+        <div class="timeline-month">
+          {{status|capitalize}} messages
+        </div>
+
+        {% for month in history_requests %}
+        <div class="timeline-section">
+          <div class="timeline-date">
+            {{month}}
+          </div>
+          <div class="row">
+
+            {% for tran in history_requests[month] %}
+            <div class="col-sm-4 py-1">
+              <a href="">
+              <div class="timeline-box">
+                <div class="box-title">
+                  <!--<div><strong>From</strong>&nbsp :&nbsp<span> {{tran['from']}}</span></div>-->
+                  <div><strong>To</strong>:<span> {{tran['to']}}</span></div>
+                  <div><strong>Description</strong>:<span> {{tran['description']}}</span></div>
+                </div>
+                <!--<div class="box-content">
+                  <div class="box-item"><strong>Description</strong>:</br>
+                    {{tran['description']}}
+                  </div>
+                </div>-->
+                <div class="box-footer">
+                  {{tran['time']}}
+                </div>
+              </div>
+            </a>
+            </div>
+            {% endfor %}
+
+          </div>
+
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+      let composed = document.querySelectorAll('[data-status="composed"]');
+      let rejected = document.querySelectorAll('[data-status="rejected"]');
+      let forwarded = document.querySelectorAll('[data-status="forwarded"]');
+      let accepted = document.querySelectorAll('[data-status="accepted"]');
+      let pending = document.querySelectorAll('[data-status="pending"]');
+
+      for(let i=0; i<composed.length; ++i) {
+        //composed[i].innerHTML=" Composed";
+        composed[i].classList.add("fa-pencil");
+      }
+
+      for(let i=0; i<rejected.length; ++i) {
+        //rejected[i].innerHTML=" Rejected";
+        rejected[i].classList.add("fa-ban");
+      }
+
+      for(let i=0; i<forwarded.length; ++i) {
+        //forwarded[i].innerHTML=" Forwarded";
+        forwarded[i].classList.add("fa-mail-forward");
+      }
+
+      for(let i=0; i<accepted.length; ++i) {
+        //accepted[i].innerHTML=" Accepted";
+        accepted[i].classList.add("fa-check");
+      }
+
+      for(let i=0; i<pending.length; ++i) {
+        //pending[i].innerHTML=" Pending";
+        pending[i].classList.add("fa-clock-o");
+      }
+    </script>
+{% endblock %}

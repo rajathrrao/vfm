@@ -1,0 +1,21 @@
+<header>
+        	<div class="containers">
+          {% if session['loggedin'] %}
+            <div class="logged-in">
+              <i class="fa fa-user" aria-hidden="true"></i> {{session['username']}}
+            </div>
+          {% endif %}
+            <div class="headings">
+            <img src="{{ url_for('static',filename='jss.png') }}" class="img-fluid jss-logo" width="10%" height="9%" alt="Image">
+            <h3 class='container-heading' style="font-family: Times New Roman, Times, serif"><span class="heading_font_1" style="font-size:30px;">JSS SCIENCE AND TECHNOLOGY UNIVERSITY<br><h5>SRI JAYACHAMARAJENDRA COLLEGE OF ENGINEERING</h5><h6>MYSURU</h6></span></h3>
+            </div>
+          </div>
+
+  {% if back %}
+    <a href="{{ back }}" class="btn btn-outline-dark" id="back"><i class="fa fa-arrow-left"></i> Back</a>
+  {% endif %}
+  {% if logout %}
+    <a href="{{ logout }}" class="btn btn-outline-danger" id="Logout">Logout <i class="fa fa-sign-out" ></i></a>
+  {% endif %}
+  <div style="height: 40px;"></div>
+</header>

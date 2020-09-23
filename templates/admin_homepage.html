@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{url_for('static',filename='dashboard.css')}}">
+{% endblock %}
+
+{% block main %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+                    <div class="alert alert-{{category}} alert-dismissible fade show">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{message}}
+                    </div>
+                    {% endfor %}
+				{% endif %}
+			{% endwith %}
+        <section>
+            <div class="container">
+                <a  href="{{ url_for('.admin_file_history') }}">
+                <div id="History">
+                    <img src="{{ url_for('static',filename='history.png') }}" alt="History">
+                    <button class="tbtn" id="btn1"><h5 style="margin-bottom:0px;">File History</h5></button>
+                    
+                </div>
+            </a>
+            <a href="{{ url_for('.admin_add_user') }}">
+                <div id="Pending">
+                    <img src="{{ url_for('static',filename='pending.jpg') }}" alt="Pending">
+                    <button class="tbtn" id="btn2"><h5 style="margin-bottom:0px;">Add user</h5></button>
+                </div>
+            </a>
+
+            <a href="{{ url_for('.admin_modify_user') }}">
+                <div id="Pending">
+                    <img src="{{ url_for('static',filename='pending.jpg') }}" alt="Pending">
+                    <button class="tbtn" id="btn2"><h5 style="margin-bottom:0px;">Modify user</h5></button>
+                </div>
+            </a>
+            </div>
+        </section>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

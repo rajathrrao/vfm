@@ -1,0 +1,161 @@
+html{
+	padding:0;
+	margin:0;
+	height:100%;
+	width:100%;
+}
+
+body
+{
+	font-family: "Segoe UI", Tahoma, Helvetica, freesans, sans-serif;
+	font-size: 90%;
+	color: #333;
+	background-color: #fff;
+	padding-bottom:40px;
+}
+
+form{
+	background-color:#D0ECEF;
+	padding:20px;
+}
+
+.message {
+  font-size: 30px;
+  margin: auto;
+  margin-top:0;
+  border-bottom: 2px  groove grey;
+  padding: 25px;
+  padding-top:0;
+  text-align: center;
+}
+#dropdown{
+	border-radius:5px;
+	font-size:20px;
+}
+.dropdown-box{
+  margin: auto 40% auto auto;
+  text-align: center;
+  font-size: 25px;
+  padding: 20px;
+}
+
+.textarea {
+	border: none;
+	width: 100%;
+	max-width: 100%;
+}
+
+#filedrag
+{
+	font-weight: bold;
+	text-align: center;
+	padding: 1em 0;
+	margin: 1em 0;
+	color: #555;
+	border: 2px dashed #555;
+	border-radius: 7px;
+	cursor: pointer;
+}
+
+#filedrag.hover
+{
+	color: #f00;
+	border-color: #f00;
+	border-style: solid;
+	box-shadow: inset 0 3px 4px #888;
+}
+
+img
+{
+	max-width: 100%;
+}
+fieldset{
+  width: 50%;
+  margin: auto;
+}
+pre
+{
+	width: 95%;
+	height: 8em;
+	font-family: monospace;
+	font-size: 0.9em;
+	padding: 1px 2px;
+	margin: 0 0 1em auto;
+	border: 1px inset #666;
+	background-color: #eee;
+	overflow: auto;
+}
+
+#messages
+{
+	padding: 0 10px;
+  width: 50%;
+	margin: 1em auto;
+	border: 1px solid #999;
+}
+
+#progress p
+{
+	display: block;
+	width: 240px;
+	padding: 2px 5px;
+	margin: 2px 0;
+	border: 1px inset #446;
+	border-radius: 5px;
+	background: #eee url("progress.png") 100% 0 repeat-y;
+}
+
+#progress p.success
+{
+	background: #0c0 none 0 0 no-repeat;
+}
+
+#progress p.failed
+{
+	background: #c00 none 0 0 no-repeat;
+}
+
+#upl {
+	background-color: #4CAF50;
+	color: white;
+	padding: 14px 20px;
+	margin-top:10px;
+	margin: 8px 0;
+	border: none;
+	font-size:15px;
+	cursor: pointer;
+	width: 100%;
+  }
+#upl:hover{
+	opacity:0.7;
+}
+
+#fileselect {
+	max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  #header {
+    text-align: center;
+    font-size: 13px;
+    height: 100px;
+  }
+  .dropdown-box{
+  margin:1em 0;
+  text-align: left;
+  font-size: 25px;
+  padding: 10px;
+}
+  fieldset{
+  width: 90%;
+  margin: auto;
+}
+
+  #messages
+{
+	padding: 0 10px;
+  	width: 90%;
+	margin: 1em auto;
+	border: 1px solid #999;
+}
+}

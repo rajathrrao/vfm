@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{url_for('static',filename='create_message.css')}}">
+{% endblock %}
+
+{% block main %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+                    <div class="alert alert-{{category}} alert-dismissible fade show">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{message}}
+                    </div>
+                    {% endfor %}
+				{% endif %}
+			{% endwith %}
+<div class="message">
+	Create a Message
+</div>
+
+<form id="upload" action="" method="POST" enctype="multipart/form-data" >
+<div>
+<div class="dropdown-box">
+    <label for="to" id="dropdown-label">To</label>
+    <select id="dropdown" name="dept">
+      <option disabled selected value>Select option</option>
+      {% for department in dept %}
+        {% if department[1] != session['username'] %}
+        <option value="{{ department[1] }}">{{ department[1] }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+</div>
+
+<fieldset>
+
+<input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
+<div class="form-group"><textarea class="textarea" name="description" id="" class="form-control">Description...</textarea></div>
+<div id="filediv">
+	<label for="fileselect" class="font-weight-bold">Files to upload:</label>
+	<input type="file" id="fileselect" name="letter" multiple="multiple" class="btn btn-secondary btn-sm"/>
+	<div id="filedrag">or drop files here</div>
+</div>
+
+<div id="submitbutton">
+	<button id="upl" type="submit">Upload Files  <i style="padding-left:5px;font-size:15px;" class="fa fa-upload"></i></button>
+</div>
+
+</fieldset>
+</div>
+</form>
+
+<div id="messages">
+<p>Status Messages</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{url_for('static',filename='create_message.js')}}"></script>
+{% endblock %}
