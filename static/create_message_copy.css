@@ -14,7 +14,6 @@ body {
 }
 
 form {
-  background-color: #d0ecef;
   padding: 20px;
 
 }
@@ -25,8 +24,6 @@ form {
   margin: auto;
   margin-top: 0;
   border-bottom: 2px groove grey;
-  padding: 25px;
-  padding-top: 0;
   text-align: center;
 }
 #dropdown {
@@ -39,21 +36,6 @@ form {
   font-size: 25px;
   padding: 20px;
 }
-
-input[type="text"] {
-  width: 90%;
-  border: none;
-  margin: 5px;
-}
-
-.textarea {
-  border: none;
-  width: 100%;
-  max-width: 100%;
-  margin: 5px;
-}
-
-
 
 input[type="file"]{
   color: transparent;

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block stylesheets %}
+            <link rel="stylesheet" href="{{ url_for('static',filename='admin-list.css') }}">
+{% endblock %}
+
+{% block main %}
+    <section>
+        <div class="container">
+                    <table class="table table-hover  table-sm mydatatable" id="myTable">
+                        <thead>
+                            <tr>
+                                <th id="file_created">File&nbsp;Created</th>
+                                <th id="file_id">File&nbsp;Id</th>
+                                <!-- <th id="digital_sign">Transaction Details</th> -->
+                                <th id="comment">Comments</th>
+                            </tr>
+                        
+                        </thead>
+                        <tbody id="tabledata">
+                            {% for file in files_list %}
+                            <tr class="chrow" onclick="dostuff(this)">
+                                <td >{{ file['time'] }}</td>
+                                <td><a href=""></a><i class="fa fa-file"></i></a>{{ file['file_name'] }}</td>
+                                <td>{{ file['comments'] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+        </div>
+
+    </section>
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/bootstrap-table.min.js" integrity="sha512-r+k0ZHRS62LiRIFpBwrwQ14MIT9YPusK7AcoeT34gHdzh2p7FBmU43/aE2ZDem9NM7bSIbMMV23u6zYny28oqg==" crossorigin="anonymous"></script>
+    <script src="{{url_for('static',filename='admin-list.js')}}"></script>
+        
+{% endblock %}

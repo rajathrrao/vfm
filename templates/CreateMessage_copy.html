@@ -1,11 +1,7 @@
-<head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-</head>
 {% extends 'base.html' %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="create_message.css">
-
+<link rel="stylesheet" href="{{url_for('static',filename='create_message_copy.css')}}">
 {% endblock %}
 
 {% block main %}
@@ -24,10 +20,10 @@
 </div>
 
 <!-- The file upload form used as target for the file upload widget -->
-<form id="upload" action="" method="POST" onsubmit="Init()" enctype="multipart/form-data">
+<form id="upload" action="" method="POST" enctype="multipart/form-data">
   <div class="dropdown-box">
     <label for="to" id="dropdown-label">To</label>
-      <select id="dropdown" name="dept">
+      <select id="dropdown" name="dept" required>
         <option disabled selected value>Select option</option>
         {% for department in dept %}
         {% if department[1] != session['username'] %}
@@ -36,30 +32,120 @@
         {% endfor %}
       </select>
     </div>
-    <fieldset>
-      <div class="form-group"><label for="fileID" id="file-ID">File ID</label><input type="text" id="fid" name="fid"></div>
+    <fieldset class="bg-light p-3">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend"><span class="input-group-text font-weight-bold">File ID</span></div>
+        <input type="text" id="file_id" name="file_id" class="form-control  border border-dark" required>
+      </div>
       <div id="filediv">
-        <div class="form-group"><textarea class="textarea" name="description" id="description" class="form-control">Description...</textarea></div>
-        <div class="row files" id="files1">
-          <label for="fileselect" class="font-weight-bold">Files to upload:</label>
-          <input type="file" titlr="" id="fileselect" name="files1" multiple="multiple" class="btn btn-secondary btn-sm" />
-          <ul class="fileList"></ul>
+        <div class="form-group">
+        <textarea class="textarea form-control border border-dark" name="description" id="description" placeholder="Description..." required></textarea>
         </div>
-        <div class="row files" id="files2">
-          <label for="signselect" class="font-weight-bold">Signature:</label>
-          <input type="file" titlr="" id="signselect" name="files2" multiple="multiple" class="btn btn-secondary btn-sm" />
-          <ul class="fileList"></ul>
+        <div class="custom-file mt-2">
+          <input type="file" class="custom-file-input" id="letter" name="letter" required>
+          <label class="custom-file-label border border-dark font-weight-bold" for="customFile">Files to upload</label>
         </div>
+        <div class="custom-file mt-2">
+          <input type="file" class="custom-file-input" id="digital_sign" name="digital_sign" accept="image/*" required>
+          <label class="custom-file-label border border-dark font-weight-bold" for="customFile">Add Digital signature</label>
+        </div>
+        
         <div id="previewbutton">
-          <button id="upl" type="submit">Preview and Upload <i style="padding-left:3px;font-size:15px;" class="fa fa-upload"></i></button>
+          <button class="btn btn-info m-3" id="pre" type="button">Preview</button>
+          <button id="upl" type="submit" for="upload">Upload <i style="padding-left:3px;font-size:15px;" class="fa fa-upload"></i></button>
         </div>
       </div>
     </fieldset>
-    <div id="preview">
-      <p><strong>Preview</strong></p>
-      </div>
   </form>
+
+
+  <div id="preview">
+    <p><strong>Preview</strong></p>
+    <div class="d-flex justify-content-center pt-4 pb-5">
+      <div class="col-lg-8 col-sm-10 col-12 pb-2">
+        <div class="timeline-box">
+          <div class="box-title">
+            <i class="float-right bg-{{status}} fa fa-pencil-alt" aria-hidden="true"> Composed</i>
+            <div class="d-flex"><strong>From</strong>:&nbsp<span> </span id="fromput"></div>
+            <div class="d-flex"><strong>To</strong>&nbsp &nbsp &nbsp:&nbsp<span id="toput"> </span></div>
+          </div>
+          <div class="box-content">
+            <div class="box-item"><strong>Description</strong>:<br/>
+              <div id="des"></div>
+            </div>
+            <div class="box-item"><strong>File ID:</strong>:<br/>
+              <div id="fid"></div>
+            </div>
+            <div class="row">
+              <div class="box-item col-sm-6 col-12"><strong>Attached file:</strong><br>
+                <div class="btn-group-vertical bg-light col-lg-8">
+                  <a class="btn btn-lg btn-outline-info" href="">View File</a>
+                  <a class="btn btn-sm btn-secondary" href=""><span class="fa fa-download"> </span></a>
+                </div>
+              </div>
+              <div class="box-item col-sm-6 col-12"><strong>Digital signatures file</strong>:<br>
+                <div class="btn-group-vertical bg-light col-lg-8">
+                  <a class="btn btn-lg btn-outline-info" href="">View File</a>
+                  <a class="btn btn-sm btn-secondary" href=""><span class="fa fa-download"> </span></a>
+                </div>
+              </div>
+            </div>
+            
+            
+            </div>
+    
+          </div>
+          <div class="box-footer">
+            <i class="float-left bg-{{status}} fa" aria-hidden="true" data-status="{{status}}"></i>
+            {% if status=='composed' %}
+              <div class="row" style="width: 100%">
+                {% for departs in tran['history'] %}
+                  {% if departs['status']!="pending" %}
+                    <div class="col-sm-4 col-6 status">
+                      <span class="text-{{departs['status']}} fa" aria-hidden="true" data-status="{{departs['status']}}">
+                        {{departs['from']}} <span class="fa fa-arrow-circle-right"></span> {{departs['to']}}</span>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    
+    </div>
+  </div>
+
+
 {% endblock %}
+
 {% block scripts %}
-<script src=create_message.js"></script>
+<script>
+$(".custom-file-input").on("change", function() {
+  var fileName = $(this).val().split("\\").pop();
+  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
+document.getElementById("preview").style.display="none";
+
+document.getElementById("pre").onclick = "getvalues()";
+
+function getvalues(){
+    var selectto=document.getElementById("dropdown");
+    var fileid=document.getElementById("fileid");
+    var description=document.getElementById("description");
+    selectto=selectto.options[selecto.selectedIndex].value;
+    fileid=fileid.innerHTML;
+    description=description.innerHTML;
+    document.getElementById("toput").innerHTML=selectto;
+    document.getElementById("fromput").innerHTML="";
+    document.getElementById("des").innerHTML=description;
+    document.getElementById("fid").innerHTML=fileid;
+
+    var preblock=document.getElementById("preview");
+    if(preblock.style.display="none"){
+      preblock.style.display="block";
+    }else{
+      preblock.style.display="none";
+    }
+</script>
 {% endblock %}

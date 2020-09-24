@@ -19,20 +19,20 @@
             <div class="container">
                 <a  href="{{ url_for('.history') }}">
                 <div id="History">
-                    <img src="{{ url_for('static',filename='history.png') }}" alt="History">
+                    <i class="fas fa-history" style="font-size:80px;color:rgb(255, 255, 255)"></i>
                     <button class="tbtn" id="btn1"><h5 style="margin-bottom:0px;">History</h5></button>
                     
                 </div>
             </a>
             <a href="{{ url_for('.pending') }}">
                 <div id="Pending">
-                    <img src="{{ url_for('static',filename='pending.jpg') }}" alt="Pending">
+                    <i class="fas fa-hourglass-start" style="font-size:80px;color:rgb(255, 255, 255)"></i>
                     <button class="tbtn" id="btn2"><h5 style="margin-bottom:0px;">Pending</h5></button>
                 </div>
             </a>
             <a href="{{ url_for('.create_message') }}">
                 <div id="Create">
-                    <img src="{{ url_for('static',filename='create.jpg') }}" alt="Create Message">
+                    <i class="fas fa-folder-plus" style="font-size:80px;color:rgb(255, 255, 255)"></i>
                     <button class="tbtn" id="btn3"><h5 style="margin-bottom:0px;">Create Message</h5></button>
                 </div>
             </a>

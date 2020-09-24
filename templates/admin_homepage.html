@@ -24,19 +24,13 @@
                     
                 </div>
             </a>
-            <a href="{{ url_for('.admin_add_user') }}">
+            <a href="{{ url_for('.admin_list_users') }}">
                 <div id="Pending">
                     <img src="{{ url_for('static',filename='pending.jpg') }}" alt="Pending">
                     <button class="tbtn" id="btn2"><h5 style="margin-bottom:0px;">Add user</h5></button>
                 </div>
             </a>
 
-            <a href="{{ url_for('.admin_modify_user') }}">
-                <div id="Pending">
-                    <img src="{{ url_for('static',filename='pending.jpg') }}" alt="Pending">
-                    <button class="tbtn" id="btn2"><h5 style="margin-bottom:0px;">Modify user</h5></button>
-                </div>
-            </a>
             </div>
         </section>
 {% endblock %}

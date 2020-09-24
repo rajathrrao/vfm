@@ -1,7 +1,8 @@
-from flask import Flask, request, render_template, url_for, flash, session,redirect,jsonify
+from flask import Flask, request, render_template, url_for, flash, session,redirect,jsonify, send_file
 import pymysql,sys,datetime,os
-
+from forms import LoginForm,RegisterForm,ModifyForm
 from werkzeug.security import generate_password_hash, check_password_hash
+from word import digi_sign_doc, doc2pdf_linux
 
 HOST = 'localhost'
 USER = 'lcc'
@@ -16,13 +17,13 @@ else:
     print("Connection failed")
     sys.exit('Database connection error')
     
-from forms import LoginForm
+
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'LCCSJCE'
 
-dept = []
+dept = [(0,'Admin')]
 cursor = db.cursor()
 cursor.execute('SELECT dept_id,dept_name FROM departments')
 departments_data = cursor.fetchall()
@@ -92,7 +93,7 @@ def display_history(status):
     
 
     #get all the requests
-    sql_query =  '''SELECT timestamp,from_dept,to_dept,file_id,description,tran_id
+    sql_query =  '''SELECT timestamp,to_dept,description,tran_id
                     FROM transactions
                     WHERE from_dept = %s and status = %s
                     ORDER BY timestamp DESC
@@ -105,22 +106,22 @@ def display_history(status):
     cursor.close()
     
     for transactions in history_transactions_data:
-        file_history = []
-        file_name = transactions[3]
+    #    file_history = []
+    #    file_name = transactions[3]
 
-        sql_query =  '''SELECT from_dept,to_dept,status
-                    FROM transactions
-                    WHERE file_id = %s
-                    ORDER BY timestamp
-        '''
+    #    sql_query =  '''SELECT from_dept,to_dept,status
+    #                FROM transactions
+    #                WHERE file_id = %s
+    #                ORDER BY timestamp
+    #    '''
 
-        cursor = db.cursor()
-        cursor.execute(sql_query,(file_name,))
-        file_history_data = cursor.fetchall()
-        cursor.close()
+    #    cursor = db.cursor()
+    #    cursor.execute(sql_query,(file_name,))
+    #    file_history_data = cursor.fetchall()
+    #    cursor.close()
 
-        for data in file_history_data:
-            file_history.append({'from':data[0],'to':data[1],'status':data[2]})
+    #   for data in file_history_data:
+            # file_history.append({'from':data[0],'to':data[1],'status':data[2]})
             # if data[0] not in file_history:
             #     file_history.append(data[0])
             # if data[1] not in file_history:
@@ -133,15 +134,51 @@ def display_history(status):
 
         if not history_requests.get(key):
             history_requests[key] = []
-        history_requests[key].append({'id':transactions[5],'time':transactions[0],'from':transactions[1],'to':transactions[2],'letter':transactions[3],'description':transactions[4],'history':file_history}) 
-
-    print(history_requests) 
+        history_requests[key].append({'id':transactions[3],'time':transactions[0],'to':transactions[1],'description':transactions[2],})  
 
     return render_template('history_copy.html', status= status, history_requests=history_requests, back=url_for('.history'), logout=url_for('.logout'))
 
-@app.route('/message/<status>/<tranid>')
-def message(status,tranid):
-    return render_template('message.html', back=url_for('.display_history',status=status), logout=url_for('.logout'), tran={})
+@app.route('/message/<status>/<tran_id>')
+def message(status,tran_id):
+    if not session.get('loggedin'):
+        return redirect(url_for('login'))
+
+    sql_query =  '''SELECT *
+                    FROM transactions
+                    WHERE tran_id=%s
+    '''
+    cursor = db.cursor()
+    cursor.execute(sql_query,(tran_id,))
+    transaction = cursor.fetchall()
+    transaction=transaction[0]
+    cursor.close()
+
+    file_history = []
+    if status=='composed':
+        file_name = transaction[4]
+
+        sql_query =  '''SELECT from_dept,to_dept,status
+                        FROM transactions
+                        WHERE file_id = %s
+                        ORDER BY timestamp
+            '''
+
+        cursor = db.cursor()
+        cursor.execute(sql_query,(file_name,))
+        file_history_data = cursor.fetchall()
+        cursor.close()
+
+        for data in file_history_data:
+            file_history.append({'from':data[0],'to':data[1],'status':data[2]})
+
+    tran={'id':tran_id,'from':transaction[1],'to':transaction[2],'time':transaction[3],'letter':transaction[4],'description':transaction[6],'history':file_history,}
+
+    if status=='pending':
+        back=url_for('.pending')
+    else:
+        back=url_for('.display_history',status=status)
+
+    return render_template('message.html', status=status, dept=dept, back=back, logout=url_for('.logout'), tran=tran)
 
 @app.route('/pending')
 def pending():
@@ -152,13 +189,12 @@ def pending():
     pending_requests = {}
 
     #get all the pending requests
-    sql_query =  '''SELECT tran_id,timestamp,from_dept,file_id,description
+    sql_query =  '''SELECT tran_id,timestamp,from_dept,description
                     FROM transactions
                     WHERE to_dept = %s and status = 'pending'
                     ORDER BY timestamp DESC
         '''
 
-    
     cursor = db.cursor()
     cursor.execute(sql_query,(current_dept,))
     pending_transactions_data = cursor.fetchall()
@@ -172,10 +208,9 @@ def pending():
 
         if not pending_requests.get(key):
             pending_requests[key] = []
-        pending_requests[key].append({'id':transactions[0],'time':transactions[1],'from':transactions[2],'letter':transactions[3],'description':transactions[4]})  
+        pending_requests[key].append({'id':transactions[0],'time':transactions[1],'from':transactions[2],'description':transactions[3]})  
 
-
-    return render_template('pending.html', pending_requests=pending_requests ,dept=dept, back=url_for('.dashboard'), logout=url_for('.logout'))
+    return render_template('history_copy.html',status='pending', history_requests=pending_requests, back=url_for('.dashboard'), logout=url_for('.logout'))
 
 @app.route('/modify-transaction',methods=['POST'])
 def modify_transaction():
@@ -187,14 +222,14 @@ def modify_transaction():
 
     action = request.form.get('action')
     id = request.form.get('id')
-    current_dept = request.form.get('from_dept')
     
     file_name = request.form.get('file')
     description = request.form.get('description')
+    digital_sign = request.files.get('digital_sign')
 
     present_time = datetime.datetime.now()
 
-    if action == 'forward':
+    if action == 'forwarded':
         to_dept = request.form.get('to_dept')
         sql_query = '''
                 UPDATE transactions
@@ -231,8 +266,11 @@ def modify_transaction():
 
 
     else:
-        action = action+'ed'
-        origin_dept = file_name[:file_name.find('_')]
+
+        sql_query1 = '''
+                SELECT from_dept FROM transactions
+                WHERE file_id = %s AND status = %s
+                '''
         sql_query = '''
                 UPDATE transactions
                 SET timestamp = %s,status = %s,to_dept = %s,from_dept = %s,description = %s
@@ -240,6 +278,8 @@ def modify_transaction():
 
         try:
             cursor = db.cursor()
+            cursor.execute(sql_query1,(file_name,'composed',))
+            origin_dept=cursor.fetchone()[0]
             cursor.execute(sql_query,(present_time,action,origin_dept,current_dept,description,id,))
             db.commit()
             cursor.close()
@@ -248,25 +288,28 @@ def modify_transaction():
             print("Error while accepting transaction",e)
         else:
             flash(f'Successfully {action}','success')
+    
+    digi_sign_doc(file_name, current_dept, action, description, digital_sign)
     return redirect(url_for('.pending'))
 
 @app.route('/create-message',methods=['GET','POST'])
 def create_message():
     if not session.get('loggedin'):
         return redirect(url_for('login'))
-
-    id = session.get('id')
+        
     from_dept = session.get('username')
 
     if request.method == 'POST':
+        file_id = request.form.get('file_id')
         to_dept = request.form.get('dept')
         file = request.files.get('letter')
         description = request.form.get('description')
+        digital_sign = request.files.get('digital_sign')
 
         print("File",file)
 
         present_time = datetime.datetime.now()
-        file_name = from_dept +'_'+ str(present_time.date())+str(present_time.time())
+        file_name = file_id # from_dept +'_'+ str(present_time.date())+str(present_time.time())
 
         file.save(os.getcwd()+'/files/'+file_name)
         print("Saved file as",file_name)
@@ -311,9 +354,10 @@ def create_message():
         else:
             print('dummy successful')
 
+        digi_sign_doc(file_name, from_dept, 'composed', description, digital_sign)
         return redirect(url_for('dashboard'))
 
-    return render_template('create_message.html',dept = dept, back=url_for('.dashboard'), logout=url_for('.logout'))
+    return render_template('CreateMessage_copy.html',dept = dept, back=url_for('.dashboard'), logout=url_for('.logout'))
 
 
 @app.route('/register')
@@ -356,25 +400,164 @@ def get_file(file_name):
     
     return text
 
-@app.route('/admin')
+@app.route('/admin_homepage')
 def admin_homepage():
     if session['admin']:
         return render_template('admin_homepage.html')
 
+@app.route('/admin_list_users')
+def admin_list_users():
+    if session['admin']:
+        sql_query =  '''SELECT dept_name,dept_email
+                    FROM departments
+            '''
+
+        cursor = db.cursor()
+        cursor.execute(sql_query)
+        departments_data = cursor.fetchall()
+        cursor.close()
+
+        dept_list = []
+
+        for dept in departments_data:
+            dept_list.append({'name':dept[0],'email':dept[1]})
+
+        return render_template('user_list.html',dept_list=dept_list)
+        
+
 @app.route('/admin_file_history')
 def admin_file_history():
     if session['admin']:
-        return render_template('admin_homepage.html')
+        sql_query =  '''SELECT timestamp,file_id,description
+                    FROM transactions
+                    WHERE status = 'composed'
+                    ORDER BY timestamp DESC
+            '''
 
-@app.route('/admin_add_user')
+        cursor = db.cursor()
+        cursor.execute(sql_query)
+        pending_transactions_data = cursor.fetchall()
+        cursor.close()
+
+        files_list = []
+
+        for file in pending_transactions_data:
+            files_list.append({'file_name':file[1],'time':file[0],'comments':file[2]})
+
+        return render_template('admin_list.html',files_list=files_list)
+
+    return render_template('admin_homepage.html',files_list=files_list)
+
+@app.route('/admin_add_user',methods=['GET','POST'])
 def admin_add_user():
     if session['admin']:
-        return render_template('admin_homepage.html')
+        form=RegisterForm()
+        if request.method == 'POST':
+            if form.validate_on_submit():
+                username = form.username.data
+                email = form.email.data
+                password = form.password.data
 
-@app.route('/admin_modify_user')
-def admin_modify_user():
+                password_hash = generate_password_hash(password, method='sha256')
+
+                sql_query = '''INSERT 
+                        INTO 
+                        departments 
+                        (dept_name,dept_email,password) values
+                        (%s,%s,%s)
+                    '''
+                try:
+                    cursor = db.cursor()
+                    cursor.execute(sql_query,(username,email,password_hash,))
+                    cursor.close()
+                    db.commit()
+                except Exception as e:
+                    db.rollback()
+                    print("Error while inserting new user",e)
+                else:
+                    flash(f'Added user {username}.','success')
+                return redirect('admin_list_users')
+        return render_template('admin_add_user.html',form=form)
+
+@app.route('/admin_modify_user/<username>',methods=['GET','POST'])
+def admin_modify_user(username):
     if session['admin']:
-        return render_template('admin_homepage.html')
+        form=ModifyForm()    
+
+        if request.method == 'POST':
+            #insert
+            email = form.email.data
+            password = form.password.data
+
+            if password is not None:
+                password_hash = generate_password_hash(password,method='sha256')
+
+                sql_query = '''UPDATE  
+                        departments SET 
+                        dept_email = %s, password = %s 
+                        where dept_name = %s
+                    '''
+                try:
+                    cursor = db.cursor()
+                    cursor.execute(sql_query,(email,password_hash,username,))
+                    cursor.close()
+                    db.commit()
+                except Exception as e:
+                    db.rollback()
+                    print("Error while modifying user",e)
+                else:
+                    flash(f'Modified user {username}.','success')
+                return redirect(url_for('admin_list_users'))
+
+            else:
+
+                sql_query = '''UPDATE  
+                        departments SET 
+                        dept_email = %s
+                        where dept_name = %s
+                    '''
+                try:
+                    cursor = db.cursor()
+                    cursor.execute(sql_query,(email,username,))
+                    cursor.close()
+                    db.commit()
+                except Exception as e:
+                    db.rollback()
+                    print("Error while modifying user",e)
+                else:
+                    flash(f'Modified user {username}.','success')
+                return redirect(url_for('admin_list_users'))
+
+              
+        cursor = db.cursor()
+        cursor.execute('SELECT dept_id,dept_name,dept_email FROM departments where dept_name = %s',(username,))
+        departments_data = cursor.fetchone()
+        cursor.close()
+        form.username.data = username
+        form.email.data = departments_data[2]
+        
+        return render_template('admin_modify_user.html',form=form)
+
+@app.route('/download/<file_name>')
+def download(file_name):
+    if not session.get('loggedin'):
+        return redirect(url_for('login'))
+    
+    os.chdir('/home/narayan/vfm')
+    file_path=os.getcwd()+'/files/'+file_name
+    return send_file(file_path, as_attachment = False,attachment_filename=file_name)
+
+@app.route('/preview/<file_name>')
+def preview(file_name):
+    if not session.get('loggedin'):
+        return redirect(url_for('login'))
+
+    file_path=os.getcwd()+'/files/'+file_name
+    doc2pdf_linux(file_name)
+    # new_file_path = os.getcwd()+'/'+file_name+".pdf"
+    new_filename = url_for('static',filename=file_name+'.pdf')
+    return '<iframe src="'+new_filename+'" style="width: 100vw; height: 100vh;"></iframe>'
+    
         
 if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0')

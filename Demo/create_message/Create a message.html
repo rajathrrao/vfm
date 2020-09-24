@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Create a Message</title>
+<link rel="stylesheet" type="text/css" media="all" href="styles.css" />
+</head>
+<body>
+
+<header id="header">
+	<h1>JSS Science And Technology University (LCC)</h1>
+</header>
+<div class="message">
+	Create a Message
+</div>
+
+<form id="upload" action="" method="POST" enctype="multipart/form-data">
+
+<div class="dropdown-box">
+    <label for="to" id="dropdown-label">To</label>
+    <select id="dropdown" name="">
+      <option disabled selected value>Select option</option>
+      <option value="CS Department">CS Department</option>
+      <option value="IS Department">IS Department</option>
+      <option value="EC Department">EC Department</option>
+    </select>
+</div>
+
+<fieldset>
+
+<input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
+
+<div>
+	<label for="fileselect">Files to upload:</label>
+	<input type="file" id="fileselect" name="fileselect[]" multiple="multiple" />
+	<div id="filedrag">or drop files here</div>
+</div>
+
+<div id="submitbutton">
+	<button type="submit">Upload Files</button>
+</div>
+
+</fieldset>
+
+</form>
+
+<div id="messages">
+<p>Status Messages</p>
+</div>
+
+<footer>Copyright</footer>
+<script src="filedrag.js"></script>
+</body>
+</html>

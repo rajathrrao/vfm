@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="history.css">
+    <title></title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="timeline">
+        <div class="timeline-month">
+          September, 2020
+        </div>
+
+        <div class="timeline-section">
+          <div class="timeline-date">
+            11, Friday
+          </div>
+          <div class="row">
+
+            <div class="col-sm-6">
+              <div class="timeline-box">
+                <div class="box-title">
+                  <i class="float-right bg-4 fa" aria-hidden="true" data-status="4"> Pending</i>
+                  <div class="d-flex"><strong>From</strong>:&nbsp<span> Computer Science</span></div>
+                  <div class="d-flex"><strong>To</strong>&nbsp &nbsp &nbsp:&nbsp<span> Mechanical</span></div>
+                </div>
+                <div class="box-content">
+                  <div class="box-item"><strong>Description</strong>:</br>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  </div>
+                  <div class="box-item"><strong>Attached file</strong>:</br>
+                    <a class="btn btn-sm btn-outline-info">File</a>
+                  </div>
+                </div>
+                <div class="box-footer">
+                  <i class="float-left bg-4 fa" aria-hidden="true" data-status="4"> Pending</i>
+                  time
+                  <div class="row" style="width: 100%">
+                    <div class="col-sm-4 col-6 status">
+                      <span class="text-3 fa fa-check" aria-hidden="true" data-status="3"> CS Department</span>
+                    </div>
+                    <div class="col-sm-4 col-6 status">
+                        <span class="text-3 fa fa-check" aria-hidden="true" data-status="3"> EC Department</span>
+                    </div>
+                    <div class="col-sm-4 col-6 status">
+                        <span class="text-4 fa fa-check" aria-hidden="true" data-status="4"> IS Department</span>
+                    </div>
+                    <div class="col-sm-4 col-6 status">
+                        <span class="text-4 fa fa-check" aria-hidden="true" data-status="4"> Mech Department</span>
+                    </div>
+                    <div class="col-sm-4 col-6 status">
+                        <span class="text-4 fa fa-check" aria-hidden="true" data-status="4"> BT Department</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+      let composed = document.querySelectorAll('[data-status="0"]');
+      let rejected = document.querySelectorAll('[data-status="1"]');
+      let forwarded = document.querySelectorAll('[data-status="2"]');
+      let accepted = document.querySelectorAll('[data-status="3"]');
+      let pending = document.querySelectorAll('[data-status="4"]');
+
+      for(let i=0; i<composed.length; ++i) {
+        composed[i].classList.add("fa-pencil");
+      }
+
+      for(let i=0; i<rejected.length; ++i) {
+        rejected[i].classList.add("fa-ban");
+      }
+
+      for(let i=0; i<forwarded.length; ++i) {
+        forwarded[i].classList.add("fa-mail-forward");
+      }
+
+      for(let i=0; i<accepted.length; ++i) {
+        accepted[i].classList.add("fa-check");
+      }
+
+      for(let i=0; i<pending.length; ++i) {
+        pending[i].classList.add("fa-clock-o");
+      }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>

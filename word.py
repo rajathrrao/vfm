@@ -1,8 +1,11 @@
 from docx import Document
 from docx.shared import Inches, Pt
+import os
+import sys
+import subprocess
 
 def digi_sign_doc(file_id, dept, status, comment, digital_sign):
-    file_name = file_id+'_digital_signatures.docx'
+    file_name = os.getcwd()+'/files/'+file_id+'_digital_signatures.docx'
 
     if status=='composed':
         document=Document()
@@ -39,3 +42,26 @@ def digi_sign_doc(file_id, dept, status, comment, digital_sign):
     except:
         print('Error while saving document')
         return False
+
+def doc2pdf_linux(doc):
+    """
+    convert a doc/docx document to pdf format (linux only, requires libreoffice)
+    :param doc: path to document
+    """
+    os.chdir('/home/narayan/vfm/files')
+    filename = doc
+    doc = doc + ".docx"
+    
+    cmd = 'libreoffice --convert-to pdf'.split() + [doc]
+    print("\nFile",doc,cmd)
+    p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    p.wait(timeout=20)
+    stdout, stderr = p.communicate()
+    print("\nDOne converting")
+    current_file = os.getcwd()+'/'+filename + ".pdf"
+    move_to = '/home/narayan/vfm/static/'+filename+".pdf"
+    os.rename(current_file, move_to)
+    print("\nMoved file\n")
+    if stderr:
+        raise subprocess.SubprocessError(stderr)
+    

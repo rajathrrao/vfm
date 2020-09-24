@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{url_for('static',filename='loginpage.css')}}">
+{% endblock %}
+
+{% block main %}    
+        <Section>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+                    <div class="alert alert-{{category}} alert-dismissible fade show">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{message}}
+                    </div>
+                    {% endfor %}
+				{% endif %}
+			{% endwith %}
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                <div class="container">
+                    <div><h2>Add User</h2></div>
+                    <label for="username">
+                        <b>Username</b>
+                    </label>
+                    {{ form.username(spellcheck="false", autocomplete="off") }}
+                    <div class="error">
+						{% for error in form.errors['username'] %}
+                        <p class="text-warning"><i class="fa fa-warning"></i>{{error}}</p>
+						{% endfor%}
+                    </div>
+                
+                    <label for="email">
+                        <b>Email</b>
+                    </label>
+                    {{ form.email(spellcheck="false", autocomplete="off") }}
+                    <div class="error">
+						{% for error in form.errors['email'] %}
+                        <p class="text-warning"><i class="fa fa-warning"></i>{{error}}</p>
+						{% endfor%}
+                    </div>
+                    
+                    <label for="password"><b>Password</b></label>
+                    {{ form.password(placeholder="Enter Password") }}
+                    <div class="error">
+						{% for error in form.errors['password'] %}
+                        <p class="text-warning"><i class="fa fa-warning"></i>{{error}}</p>
+						{% endfor%}
+					</div>
+                    <div style="text-align: left;">
+                    
+                    <input type="checkbox" onclick="myFunction()"> Show Password
+                    <br></br>
+                    {{ form.register}}
+                    </div>
+                    
+                </div>
+
+
+            </form>
+        </Section>
+        {% endblock %}
+
+        {% block scripts %}
+        <script>
+            function myFunction() {
+            var x = document.getElementById("password");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+            }
+        </script>
+    {% endblock %}

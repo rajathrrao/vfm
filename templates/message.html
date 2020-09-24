@@ -5,8 +5,18 @@
 {% endblock %}
 
 {% block main %}
-<div class="d-flex justify-content-center py-4">
-    <div class="col-lg-8 col-sm-10 col-12">
+{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+                    <div class="alert alert-{{category}} alert-dismissible fade show">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{message}}
+                    </div>
+                    {% endfor %}
+				{% endif %}
+			{% endwith %}
+<div class="d-flex justify-content-center pt-4 pb-5">
+    <div class="col-lg-8 col-sm-10 col-12 pb-2">
       <div class="timeline-box">
         <div class="box-title">
           <i class="float-right bg-{{status}} fa" aria-hidden="true" data-status="{{status}}"> {{status|capitalize}}</i>
@@ -17,36 +27,37 @@
           <div class="box-item"><strong>Description</strong>:<br/>
             {{tran['description']}}
           </div>
-          <div class="box-item"><strong>Comment</strong>:<br/>
-            {{tran['comment']}}
+          <div class="box-item"><strong>File ID:</strong>:<br/>
+            {{tran['letter']}}
           </div>
           <div class="row">
             <div class="box-item col-sm-6 col-12"><strong>Attached file:</strong><br>
-              <div class="btn-group-vertical bg-light">
-                <a class="btn btn-lg btn-outline-info" href="{{url_for('.get_file',file_name=tran['letter'])}}">{{tran['letter']}}</a>
-                <a class="btn btn-sm btn-secondary" href="{{url_for('.get_file',file_name=tran['letter'])}}"><span class="fa fa-download"> </span></a>
+              <div class="btn-group-vertical bg-light col-lg-8">
+                <a class="btn btn-lg btn-outline-info" href="{{url_for('.get_file',file_name=tran['letter'])}}">View File</a>
+                <a class="btn btn-sm btn-secondary" href="{{url_for('.download',file_name=tran['letter'])}}"><span class="fa fa-download"> </span></a>
               </div>
             </div>
             <div class="box-item col-sm-6 col-12"><strong>Digital signatures file</strong>:<br>
-              <div class="btn-group-vertical bg-light">
-                <a class="btn btn-lg btn-outline-info" href="{{url_for('.get_file',file_name=tran['letter'])}}">{{tran['letter']}}</a>
-                <a class="btn btn-sm btn-secondary" href="{{url_for('.get_file',file_name=tran['letter'])}}"><span class="fa fa-download"> </span></a>
+              <div class="btn-group-vertical bg-light col-lg-8">
+                <a class="btn btn-lg btn-outline-info" href="{{url_for('.preview',file_name=tran['letter']+'_digital_signatures')}}">View File</a>
+                <a class="btn btn-sm btn-secondary" href="{{url_for('.download',file_name=tran['letter']+'_digital_signatures.docx')}}"><span class="fa fa-download"> </span></a>
               </div>
             </div>
           </div>
-  
+          
+          {% if status=='pending' %}
           <div class="box-item"><strong>Comment</strong>:<br/>
-            <form action="{{url_for('.modify_transaction')}}" method="post" class="form-group" id="{{tran['id']}}">
-              <textarea class="form-control mt-2" name="description" id="description" placeholder="{{tran['description']}}"></textarea>
+            <form action="{{url_for('.modify_transaction')}}" method="post" class="form-group" id="{{tran['id']}}" enctype="multipart/form-data">
+              <textarea class="form-control mt-2 border border-dark" name="description" id="description" placeholder="description..." required></textarea>
               <div class="custom-file mt-2">
-                <input type="file" class="custom-file-input" id="digital-sign" required>
-                <label class="custom-file-label" for="customFile">Add Digital signature</label>
+                <input type="file" class="custom-file-input" id="digital_sign" name="digital_sign" accept="image/*" required>
+                <label class="custom-file-label border border-dark" for="customFile">Add Digital signature</label>
               </div>
               <div class="d-flex justify-content-around align-items-center flex-wrap mt-2">
-                <button type="submit" name="action" value="accept" class="form-control-sm bg-accepted btn" id="accept" onclick="remove_required()">
+                <button type="submit" name="action" value="accepted" class="form-control-sm bg-accepted btn" id="accept" onclick="remove_required()">
                   <i class="fa fa-check" aria-hidden="true" style="display: block;">Accept</i>
                 </button>
-                <button type="submit" name="action" value="reject" class="form-control-sm bg-rejected btn" id="reject" onclick="remove_required()">
+                <button type="submit" name="action" value="rejected" class="form-control-sm bg-rejected btn" id="reject" onclick="remove_required()">
                   <i class="fa fa-ban" aria-hidden="true" style="display: block;">Reject</i>
                 </button>
                 <div id="forwarding" class="btn-group-vertical">
@@ -58,7 +69,7 @@
                       {% endif %}
                     {% endfor %}
                   </select>
-                  <button type="submit" name="action" value="forward" class="form-control-sm bg-forwarded btn" id="forward">
+                  <button type="submit" name="action" value="forwarded" class="form-control-sm bg-forwarded btn" id="forward">
                     <i class="fa fa-mail-forward" aria-hidden="true" style="display: block;">Forward</i>
                   </button>
                 </div>
@@ -68,11 +79,12 @@
               <input type="hidden" name="file" value="{{tran['letter']}}">
             </form>
           </div>
+          {% endif %}
   
         </div>
         <div class="box-footer">
           <i class="float-left bg-{{status}} fa" aria-hidden="true" data-status="{{status}}"></i>
-          {{tran['time']}}
+          {{tran['time'].strftime('%dth %b %Y %I:%M %p')}}
           {% if status=='composed' %}
             <div class="row" style="width: 100%">
               {% for departs in tran['history'] %}
@@ -101,7 +113,7 @@
       let pending = document.querySelectorAll('[data-status="pending"]');
 
       for(let i=0; i<composed.length; ++i) {
-        composed[i].classList.add("fa-pencil");
+        composed[i].classList.add("fa-pencil-alt");
       }
 
       for(let i=0; i<rejected.length; ++i) {
@@ -118,6 +130,15 @@
 
       for(let i=0; i<pending.length; ++i) {
         pending[i].classList.add("fa-clock-o");
+      }
+
+      $(".custom-file-input").on("change", function() {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+      });
+
+      function remove_required() {
+        $('#to_dept').removeAttr('required');
       }
     </script>
 {% endblock %}
