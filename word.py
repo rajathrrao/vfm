@@ -62,6 +62,7 @@ def doc2pdf_linux(doc):
     move_to = '/home/narayan/vfm/static/'+filename+".pdf"
     os.rename(current_file, move_to)
     print("\nMoved file\n")
+    os.chdir('/home/narayan/vfm/')
     if stderr:
         raise subprocess.SubprocessError(stderr)
     

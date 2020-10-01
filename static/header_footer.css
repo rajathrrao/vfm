@@ -1,66 +1,90 @@
 body {
-    position: relative;
-    min-height: 100vh;
-}
-
-.heading .btn{
-  margin-top: 5px;
-  border-radius: 5px;
-  border:1px solid black;
-}
-
-.heading {
-  border-bottom: 3px solid black;
-}
-
-#back{
+  position: relative;
+  min-height: 100vh;
+  }
+  
+  /* Website Title */
+  
+  
+  .containers{
+  padding: 3px;
+  position: relative;
+  text-align: center;
+  background: linear-gradient(45deg, #443B96, #F60B68, #F4483A);
+  background-size: 500% 500%;
+  animation: change-gradient 10s ease-in-out infinite;
+  }
+  @keyframes change-gradient {
+  0%{
+  background-position: 0 50%;
+  }
+  50%{
+  background-position: 100% 50%;
+  }
+  100%{
+  background-position: 0 50%;
+  }
+  }
+  
+  .container-heading{
+  margin: 0 auto;
+  width:60%;
+  }
+  
+  .heading_font_1{
+  color: #ffffff;
+  font-family: 'Sans-serif';
+  font-weight: normal;
+  }
+  
+  .img-fluid{
+  float:left;
+  margin: 0.5% 0 0 10%;
+  max-height:90px;
+  }
+  
+  #back{
   margin-left:10%;
   float:left;
   width: auto;
-}
-#back:hover{
-  opacity: 0.7;
-}
-#Logout{
+  }
+  #Logout{
   margin-right:10%;
   float:right;
   width: auto;
-}
-
-.header{
-    background-color:rgb(197, 197, 197);
-    font-size:2rem;
-    text-align: center;
-}
-
-.logged-in {
+  }
+  
+  .logged-in {
   position: absolute;
   font-size: 20px;
-  border: 1px solid black;
+  border: 1px solid #fff;
+  color: #fff;
   padding: 2px;
   margin: 5px;
-}
-
-@media(max-width: 769px) {
-  .header {
-    font-size: 1.5rem;
   }
+  
+  @media(max-width: 769px) {
   .logged-in {
-    position: relative;
+  position: relative;
+  margin: 0;
+  font-size: 14px;
   }
-  .logged-in {
-    margin: 0;
-    font-size: 14px;
+  .img-fluid{
+  margin: 2% 0 0 2%;
   }
-}
-
-footer{
+  .container-heading{
+  width:100%;
+  }
+  }
+  
+  footer{
   position: absolute;
   width: 100%;
-    background-color: rgb(211, 211, 211);
-    font-size:1rem;
-    height:3rem;
-    text-align: center;
-    bottom: 0;
-}
-
+  background-color: rgb(211, 211, 211);
+  font-size:1rem;
+  height:3rem;
+  text-align: center;
+  bottom: 0;
+  }
+  
+  

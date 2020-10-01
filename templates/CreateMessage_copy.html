@@ -51,7 +51,7 @@
         </div>
         
         <div id="previewbutton">
-          <button class="btn btn-info m-3" id="pre" type="button">Preview</button>
+          <button class="btn btn-info m-3" onclick="getvalues()" id="pre" type="button">Preview</button>
           <button id="upl" type="submit" for="upload">Upload <i style="padding-left:3px;font-size:15px;" class="fa fa-upload"></i></button>
         </div>
       </div>
@@ -59,14 +59,14 @@
   </form>
 
 
-  <div id="preview">
+  <div id="preview" style="display: none;">
     <p><strong>Preview</strong></p>
     <div class="d-flex justify-content-center pt-4 pb-5">
       <div class="col-lg-8 col-sm-10 col-12 pb-2">
         <div class="timeline-box">
           <div class="box-title">
             <i class="float-right bg-{{status}} fa fa-pencil-alt" aria-hidden="true"> Composed</i>
-            <div class="d-flex"><strong>From</strong>:&nbsp<span> </span id="fromput"></div>
+            <div class="d-flex"><strong>From</strong>:&nbsp<span id="fromput"> </span ></div>
             <div class="d-flex"><strong>To</strong>&nbsp &nbsp &nbsp:&nbsp<span id="toput"> </span></div>
           </div>
           <div class="box-content">
@@ -127,25 +127,28 @@ $(".custom-file-input").on("change", function() {
 });
 document.getElementById("preview").style.display="none";
 
-document.getElementById("pre").onclick = "getvalues()";
 
 function getvalues(){
     var selectto=document.getElementById("dropdown");
-    var fileid=document.getElementById("fileid");
+    var fileid=document.getElementById("file_id");
     var description=document.getElementById("description");
-    selectto=selectto.options[selecto.selectedIndex].value;
-    fileid=fileid.innerHTML;
-    description=description.innerHTML;
+    selectto=selectto.options[selectto.selectedIndex].value;
+
+    fileid=fileid.value;
+    description=description.value;
+    console.log(selectto,fileid,description);
+
     document.getElementById("toput").innerHTML=selectto;
     document.getElementById("fromput").innerHTML="";
     document.getElementById("des").innerHTML=description;
     document.getElementById("fid").innerHTML=fileid;
 
     var preblock=document.getElementById("preview");
-    if(preblock.style.display="none"){
+    if(preblock.style.display=="none"){
       preblock.style.display="block";
     }else{
       preblock.style.display="none";
     }
+  }
 </script>
 {% endblock %}

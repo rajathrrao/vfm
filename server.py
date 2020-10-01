@@ -388,6 +388,7 @@ def register():
 
 @app.route('/file/<file_name>')
 def get_file(file_name):
+    os.chdir('/home/narayan/vfm/')
 
     file_path = os.getcwd() + '/files/'+file_name
 
@@ -545,7 +546,7 @@ def download(file_name):
     
     os.chdir('/home/narayan/vfm')
     file_path=os.getcwd()+'/files/'+file_name
-    return send_file(file_path, as_attachment = False,attachment_filename=file_name)
+    return send_file(file_path, as_attachment = True,attachment_filename=file_name)
 
 @app.route('/preview/<file_name>')
 def preview(file_name):
