@@ -7,6 +7,8 @@ from flask_mail import Mail, Message
 
 #import blueprints
 from user.routes import user
+
+#import db configuration
 from main import db,dept,app,mail
 from file_utils import create_pdf, save_img
 
